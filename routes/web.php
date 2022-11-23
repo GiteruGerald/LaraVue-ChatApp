@@ -37,4 +37,4 @@ require __DIR__.'/auth.php';
 
 Route::middleware(['auth','verified'])->get('chat/rooms', [ChatController::class, 'rooms']);
 Route::middleware(['auth','verified'])->get('chat/room/{room}/messages', [ChatController::class, 'messages']);
-Route::middleware(['auth','verified'])->get('chat/room/{room}/message', [ChatController::class, 'newMessage']);
+Route::middleware(['auth','verified'])->post('chat/room/{room}/message', [ChatController::class, 'newMessage']);

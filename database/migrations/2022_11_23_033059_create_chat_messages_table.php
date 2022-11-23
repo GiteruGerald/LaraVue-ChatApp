@@ -19,6 +19,9 @@ class CreateChatMessagesTable extends Migration
             $table->integer('user_id');
             $table->mediumText('message');
             $table->timestamps();
+
+            $table->foreign('chat_room_id')->references('id')->on('chat_rooms');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

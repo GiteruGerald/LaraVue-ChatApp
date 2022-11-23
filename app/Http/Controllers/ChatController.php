@@ -13,21 +13,21 @@ class ChatController extends Controller
         return ChatRoom::all();
     }
 
-    public function messages(Request $request, ChatRoom $chatRoom){
-        return ChatMessage::where('chat_room_id', $chatRoom->id)
-                    ->with('user')
-                    ->orderBy('created_at', 'DESC')
-                    ->get();
+    public function messages(ChatRoom $room){
+        return ChatMessage::where('chat_room_id',$room->id)
+                ->with('user')
+                ->orderBy('created_at','DESC')
+                ->get();
     }
 
-    public function newMessage(Request $request, ChatRoom $chatRoom){
-        $newMessage = new ChatMessage;
-        $newMessage->user_id =  Auth::id();
-        $newMessage->chat_room_id = $chatRoom->id;
+    public function newMessage(Request $request, $room){
+   
+        return ChatMessage::create([
+            'user_id' => Auth::id(),
+            'chat_room_id' => $room,
+            'message' => $request->message,
+        
 
-        $newMessage->message = $request->message;
-        $newMessage->save();
-
-        return $newMessage;
+        ]);
     }
 }

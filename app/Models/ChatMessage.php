@@ -9,13 +9,15 @@ class ChatMessage extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     public function room()
     {
-        $this->hasOne(ChatRoom::class, 'foreign_key', 'chat_room_id');
+        return $this->belongsTo(ChatRoom::class, 'foreign_key', 'chat_room_id');
     }
 
     public function user()
     {
-        $this->hasOne(User::class, 'foreign_key', 'user_id');
+       return $this->hasOne(User::class, 'id','user_id');
     }
 }
