@@ -8,7 +8,14 @@ import { Head } from "@inertiajs/inertia-vue3";
 
   <BreezeAuthenticatedLayout>
     <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">Chat</h2>
+      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <chat-room-selection
+            v-if="currentRoom.id"
+            :rooms="chatRooms"
+            :currentRoom="currentRoom"
+            v-on:roomChanged="setRoom($event)"
+        />
+    </h2>
     </template>
 
     <div class="py-12">
@@ -26,11 +33,12 @@ import { Head } from "@inertiajs/inertia-vue3";
 <script>
 import MessageContainerVue from "./MessageContainer.vue";
 import InputMessageVue from "./InputMessage.vue";
-import { thisTypeAnnotation } from "@babel/types";
+import ChatRoomSelection from './ChatRoomSelection.vue';
 export default {
   components: {
     MessageContainerVue,
     InputMessageVue,
+    ChatRoomSelection,
   },
   data:function(){
     return{
@@ -39,7 +47,28 @@ export default {
         messages: []
     }
   },
+  watch:{
+    currentRoom(val, oldVal){
+      if(oldVal.id){
+        this.disconnect(oldVal); 
+      }
+      this.connect();
+    }
+  },  
   methods:{
+    connect(){
+      if(this.currentRoom.id){
+        let vn = this;
+        this.getMessages();
+        window.Echo.private("chat." + this.currentRoom.id)
+        .listen('.message.new', e =>{
+          vn.getMessages();
+        })
+      }
+    },  
+    disconnect(room){
+      window.Echo.leave("chat." + room.id);
+    },
     getRooms(){
         axios.get('/chat/rooms')
             .then(response=>{
@@ -52,7 +81,6 @@ export default {
     },
     setRoom(room){
         this.currentRoom = room;
-        this.getMessages();
     },
     getMessages(){
         axios.get('/chat/room/'+ this.currentRoom.id + '/messages')
