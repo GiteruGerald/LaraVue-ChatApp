@@ -94,6 +94,9 @@ export default {
   },
   created(){
     this.getRooms();
+  },
+  mounted(){
+    // setInterval(()=>{ this.getMessages(),5000})
   }
 };
 </script>

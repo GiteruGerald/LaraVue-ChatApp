@@ -44,6 +44,7 @@ export default {
             .then(response => {
                 if(response.status == 201){
                     this.$emit('messageSent');
+                    this.message = ' ';
                 }
             })
             .catch(error =>{
